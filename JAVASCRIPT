@@ -1,0 +1,96 @@
+// Simulação de banco de dados (em uma aplicação real, isso seria armazenado no servidor)
+let usuarios = [];
+let desafiosAtivos = [];
+let pontos = 0;
+
+// Função para cadastrar um novo usuário
+function cadastrarUsuario(event) {
+    event.preventDefault();
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    
+    usuarios.push({ nome, email, senha });
+    alert('Usuário cadastrado com sucesso!');
+    // Aqui você redirecionaria para a página inicial
+}
+
+// Função para fazer login
+function fazerLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    
+    const usuario = usuarios.find(u => u.email === email && u.senha === senha);
+    if (usuario) {
+        alert('Login bem-sucedido!');
+        // Aqui você redirecionaria para a página inicial
+    } else {
+        alert('Email ou senha incorretos.');
+    }
+}
+
+// Função para aceitar um desafio
+function aceitarDesafio(desafio) {
+    if (!desafiosAtivos.includes(desafio)) {
+        desafiosAtivos.push(desafio);
+        atualizarListaDesafios();
+        alert(`Desafio "${desafio}" aceito!`);
+    } else {
+        alert('Você já aceitou este desafio.');
+    }
+}
+
+// Função para atualizar a lista de desafios ativos
+function atualizarListaDesafios() {
+    const listaDesafios = document.getElementById('lista-desafios');
+    listaDesafios.innerHTML = '';
+    desafiosAtivos.forEach(desafio => {
+        const li = document.createElement('li');
+        li.textContent = desafio;
+        listaDesafios.appendChild(li);
+    });
+}
+
+// Função para registrar progresso
+function registrarProgresso(event) {
+    event.preventDefault();
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    pontos += checkboxes.length * 10; // 10 pontos por tarefa concluída
+    atualizarPontos();
+    alert('Progresso registrado com sucesso!');
+    // Limpar checkboxes após registro
+    checkboxes.forEach(cb => cb.checked = false);
+}
+
+// Função para atualizar a exibição de pontos
+function atualizarPontos() {
+    const pontosElement = document.getElementById('pontos');
+    pontosElement.textContent = pontos;
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const formCadastro = document.getElementById('form-cadastro');
+    if (formCadastro) {
+        formCadastro.addEventListener('submit', cadastrarUsuario);
+    }
+
+    const formLogin = document.getElementById('form-login');
+    if (formLogin) {
+        formLogin.addEventListener('submit', fazerLogin);
+    }
+
+    const botoesDesafio = document.querySelectorAll('.aceitar-desafio');
+    botoesDesafio.forEach(botao => {
+        botao.addEventListener('click', () => aceitarDesafio(botao.dataset.desafio));
+    });
+
+    const formProgresso = document.getElementById('form-progresso');
+    if (formProgresso) {
+        formProgresso.addEventListener('submit', registrarProgresso);
+    }
+
+    // Inicializar pontos
+    atualizarPontos();
+});
